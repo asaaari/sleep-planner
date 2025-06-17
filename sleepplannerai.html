@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SleepPlanner.ai | AI-Powered Sleep Optimization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --slate: #212730;
+            --soft-blue: #becee2;
+            --field-gray: #4e545d;
+            --placeholder: #868a90;
+            --teal: #8ab3c7;
+            --text-light: #e0e4e9;
+            --text-white: #ffffff;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--slate);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: var(--slate);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(190, 206, 226, 0.1);
+            text-align: center;
+        }
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--teal);
+        }
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-white);
+            font-weight: 600;
+        }
+        h1 {
+            margin-bottom: 8px;
+        }
+        .subheader {
+            color: var(--soft-blue);
+            font-size: 1.1rem;
+            margin-top: 0;
+        }
+        .card {
+            background: var(--slate);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid rgba(190, 206, 226, 0.1);
+        }
+        .input-method {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: var(--teal);
+            color: var(--slate);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            flex: 1;
+            text-align: center;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-lg {
+            padding: 16px 24px;
+            font-size: 1.1rem;
+        }
+        .btn:hover {
+            background: #9ac1d4;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--teal);
+            color: var(--teal);
+        }
+        .btn-outline:hover {
+            background: rgba(138, 179, 199, 0.1);
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--field-gray);
+            border: 1px solid var(--placeholder);
+            color: var(--text-white);
+            margin: 8px 0 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            min-height: 100px;
+        }
+        textarea:focus {
+            border-color: var(--soft-blue);
+            box-shadow: 0 0 0 2px rgba(190, 206, 226, 0.3);
+            outline: none;
+        }
+        ::placeholder {
+            color: var(--placeholder);
+            font-style: italic;
+        }
+        .example-text {
+            font-size: 0.95em;
+            color: var(--soft-blue);
+            margin-bottom: 12px;
+            font-style: normal;
+        }
+        #output {
+            display: none;
+            margin-top: 30px;
+        }
+        .warning {
+            color: var(--soft-blue);
+            font-weight: 500;
+            padding: 12px;
+            background: rgba(138, 179, 199, 0.1);
+            border-radius: 8px;
+            margin: 12px 0;
+            border-left: 3px solid var(--teal);
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Time Picker Styles */
+        .time-picker-group {
+            margin: 25px 0;
+        }
+        .time-range-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+        .time-picker-wrapper {
+            position: relative;
+            width: 48%;
+            box-sizing: border-box;
+        }
+        .time-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--field-gray);
+            border: 1px solid var(--placeholder);
+            color: var(--text-white);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            appearance: none;
+            -webkit-appearance: none;
+            box-sizing: border-box;
+        }
+        .time-input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 2px rgba(138, 179, 199, 0.3);
+            outline: none;
+        }
+        .time-display {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 8px;
+            color: var(--soft-blue);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+            }
+            .card {
+                padding: 20px;
+            }
+            .input-method {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .time-range-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .time-picker-wrapper {
+                width: 100%;
+            }
+            .time-input {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+            
+            textarea {
+                min-height: 120px;
+                padding: 12px;
+            }
+            
+            .time-display {
+                font-size: 0.85em;
+                margin-top: 6px;
+            }
+            
+            .time-picker-group {
+                margin: 20px 0;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .time-input {
+                padding: 8px 6px;
+                font-size: 0.85rem;
+            }
+            textarea {
+                min-height: 140px;
+                font-size: 0.9rem;
+            }
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-moon"></i>
+            </div>
+            <h1>SleepPlanner.ai</h1>
+            <p class="subheader">Optimize your sleep around your schedule with AI</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Input Method Toggle -->
+        <div class="input-method">
+            <button class="btn" onclick="showGoogleAuth()"><i class="fab fa-google"></i> Sync Google Calendar</button>
+            <button class="btn btn-outline" onclick="showManualForm()">Manual Input</button>
+        </div>
+
+        <!-- Google Auth -->
+        <div id="googleAuth" class="card" style="display: none;">
+            <h2>Connect Your Calendar</h2>
+            <p>We'll automatically detect your meetings and events.</p>
+            <button class="btn" id="googleAuthButton"><i class="fab fa-google"></i> Sign in with Google</button>
+        </div>
+
+        <!-- Manual Input -->
+        <div id="manualForm" class="card">
+            <h2>Your Natural Sleep</h2>
+            <div class="time-picker-group">
+                <div class="time-range-container">
+                    <div class="time-picker-wrapper">
+                        <input type="time" class="time-input" id="sleepStart" value="23:00">
+                    </div>
+                    <div class="time-picker-wrapper">
+                        <input type="time" class="time-input" id="sleepEnd" value="07:00">
+                    </div>
+                </div>
+                <div class="time-display" id="sleepTimeDisplay">11:00 PM - 7:00 AM</div>
+            </div>
+            
+            <h2>Your Work Schedule</h2>
+            <div class="time-picker-group">
+                <div class="time-range-container">
+                    <div class="time-picker-wrapper">
+                        <input type="time" class="time-input" id="workStart" value="09:00">
+                    </div>
+                    <div class="time-picker-wrapper">
+                        <input type="time" class="time-input" id="workEnd" value="18:00">
+                    </div>
+                </div>
+                <div class="time-display" id="workTimeDisplay">9:00 AM - 6:00 PM</div>
+            </div>
+            
+            <h2>Special Events</h2>
+            <div class="example-text">Add one event per line. Format: [Event], [Start]-[End], [Date]</div>
+            <textarea id="specialEvents" placeholder="Example:
+- Team dinner, 8pm-11pm, Jun 10
+- Morning flight, 6am-8am, Jun 15"></textarea>
+            
+            <button class="btn btn-lg" onclick="generatePlan()"><i class="fas fa-magic"></i> Generate Your Plan</button>
+        </div>
+        
+        <!-- Output Section -->
+        <div id="output" class="card">
+            <h2>Your AI Sleep Plan</h2>
+            <div id="planResult">
+                <!-- Filled by JavaScript -->
+            </div>
+            <button class="btn" onclick="downloadICS()"><i class="fas fa-download"></i> Download .ICS File</button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle input methods
+        function showGoogleAuth() {
+            document.getElementById('googleAuth').style.display = 'block';
+            document.getElementById('manualForm').style.display = 'none';
+        }
+        
+        function showManualForm() {
+            document.getElementById('manualForm').style.display = 'block';
+            document.getElementById('googleAuth').style.display = 'none';
+        }
+
+        // Format time display
+        function formatTimeForDisplay(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Update time displays
+        function updateTimeDisplays() {
+            const sleepStart = document.getElementById('sleepStart').value;
+            const sleepEnd = document.getElementById('sleepEnd').value;
+            const workStart = document.getElementById('workStart').value;
+            const workEnd = document.getElementById('workEnd').value;
+            
+            document.getElementById('sleepTimeDisplay').textContent = 
+                `${formatTimeForDisplay(sleepStart)} - ${formatTimeForDisplay(sleepEnd)}`;
+            document.getElementById('workTimeDisplay').textContent = 
+                `${formatTimeForDisplay(workStart)} - ${formatTimeForDisplay(workEnd)}`;
+        }
+
+        // Initialize time pickers
+        function initTimePickers() {
+            // Set up event listeners
+            document.getElementById('sleepStart').addEventListener('change', updateTimeDisplays);
+            document.getElementById('sleepEnd').addEventListener('change', updateTimeDisplays);
+            document.getElementById('workStart').addEventListener('change', updateTimeDisplays);
+            document.getElementById('workEnd').addEventListener('change', updateTimeDisplays);
+            
+            // Initial update
+            updateTimeDisplays();
+        }
+        
+        // Generate plan
+        function generatePlan() {
+            const sleepTime = document.getElementById('sleepTimeDisplay').textContent;
+            const workTime = document.getElementById('workTimeDisplay').textContent;
+            const events = document.getElementById('specialEvents').value;
+            
+            let planHTML = `
+                <p><strong>Natural Sleep:</strong> ${sleepTime}</p>
+                <p><strong>Work Schedule:</strong> ${workTime}</p>
+            `;
+            
+            if (events) {
+                planHTML += `
+                    <div class="warning">Special events detected - adjustments recommended</div>
+                    <p><strong>Special Events:</strong></p>
+                    <ul>
+                        ${events.split('\n').filter(e => e.trim()).map(e => `<li>${e.trim()}</li>`).join('')}
+                    </ul>
+                    <p>For event days, we recommend:</p>
+                    <ul>
+                        <li>Adjusting sleep to 12am-7am</li>
+                        <li>20-minute power nap before events</li>
+                        <li>Caffeine cutoff 8 hours before adjusted sleep</li>
+                    </ul>
+                `;
+            }
+            
+            planHTML += `
+                <div class="warning">
+                    <strong>Pro Tip:</strong> Maintain consistent wake times on weekends to avoid "social jet lag"
+                </div>
+            `;
+            
+            document.getElementById('planResult').innerHTML = planHTML;
+            document.getElementById('output').style.display = 'block';
+            document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Download .ICS
+        function downloadICS() {
+            const sleepStart = document.getElementById('sleepStart').value;
+            const sleepEnd = document.getElementById('sleepEnd').value;
+            
+            const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:Sleep Block
+DTSTART:20240610T${sleepStart.replace(':', '')}00Z
+DTEND:20240610T${sleepEnd.replace(':', '')}00Z
+DESCRIPTION:AI-optimized sleep time
+END:VEVENT
+END:VCALENDAR`;
+            
+            const blob = new Blob([icsContent], { type: 'text/calendar' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'sleep-plan.ics';
+            link.click();
+        }
+        
+        // Google Auth placeholder
+        document.getElementById('googleAuthButton').addEventListener('click', function() {
+            alert("In production, this would connect to Google Calendar API");
+        });
+        
+        // Initialize on load
+        window.addEventListener('load', function() {
+            initTimePickers();
+            showManualForm(); // Show manual form by default
+        });
+    </script>
+</body>
+</html>
